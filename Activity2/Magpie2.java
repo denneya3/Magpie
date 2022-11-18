@@ -1,3 +1,7 @@
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.ArrayList;
+
 /**
  * A program to carry on conversations with a human user.
  * This is the initial version that:  
@@ -7,11 +11,15 @@
  * 		    Handles responding to simple words and phrases 
  * </li></ul>
  * This version uses a nested if to handle default responses.
- * @author Laurie White
- * @version April 2012
+ * @
+ * @version April 2053
  */
 public class Magpie2
 {
+	static final String[] randomPhrases = {"Can you tell me more?","I don't understand.","Hm.","Can you rephrase it?",
+			"I don't know how to respond to that.","Oh.","Okay.","Um.","Can we talk about something else?"};
+	private static String lastUncommittedResponse = " ";
+
 	/**
 	 * Get a default greeting 	
 	 * @return a greeting
@@ -20,7 +28,30 @@ public class Magpie2
 	{
 		return "Hello, let's talk.";
 	}
-	
+
+	public static String reformatText(String text){
+		return text.toLowerCase().replaceAll("[^a-zA-Z ]", "").toLowerCase(); // not tested
+	}
+
+	public static String getExactResponse(String text){
+        /*
+        Does not account for punctuation as of now!
+         */
+		String [] wordList = {"no,nope--Why not?"};
+		text = reformatText(text);
+		for (String s : wordList){
+			String[] localConditions = s.split("--"); // code "repeated" later
+			String[] keywords = localConditions[0].split(",");
+			for (String k : keywords){
+				if (text.equals(k)){
+					return localConditions[1];
+				} else {
+					System.out.println(k+" "+s);
+				}
+			}
+		}
+		return " ";
+	}
 	/**
 	 * Gives a response to a user statement
 	 * 
@@ -28,55 +59,68 @@ public class Magpie2
 	 *            the user statement
 	 * @return a response based on the rules given
 	 */
-	public String getResponse(String statement)
-	{
-		String response = "";
-		if (statement.indexOf("no") >= 0)
-		{
-			response = "Why so negative?";
+	private static String[] wordList = {"mother,sister,my--Im interested in your family!",
+			"dog;cat--Tell me more about your pets.",
+			"mother;sister--I wish I could meet your family.",
+			"Mr. Smith,teacher--To be honest, all I know is that Mr. Smith is a great teacher!"};
+
+	public static String getKeywordResponse(String text) {
+        /*Considers capitalizatoon
+        Considers if keyword is a substring of a word
+        Does punctuation as of now.
+         */
+        /*; is or (this condition or that condition(s))
+        , is and (that condition and that conditions(s))
+        you cannot mix ; and , !
+        */
+		text = reformatText(text);
+		ArrayList<String> words = new ArrayList<>();
+		words.addAll(Arrays.asList(text.split(" ")));
+		LinkedList<String> possibleResponses = new LinkedList<>();
+		for (String s : wordList) {
+			String[] localConditions = s.split("--");
+			String[] keywords;
+			if (localConditions[0].contains(";")) { //OR
+				keywords = localConditions[0].split(";");
+				for (String keyword : keywords) {
+					if (words.contains(keyword)) {
+						possibleResponses.addLast(localConditions[1]); //AND has priority
+					}
+				}
+			} else { //(AND) ALL MUST BE PRESENT
+				keywords = localConditions[0].split(",");
+				int contained = 0;
+				for (String keyword : keywords) {
+					if (words.contains(keyword)) {
+						contained++;
+					}
+				}
+				if (contained == keywords.length) {
+					possibleResponses.addFirst(localConditions[1]); //priority over OR
+				}
+			}
 		}
-		else if (statement.indexOf("mother") >= 0
-				|| statement.indexOf("father") >= 0
-				|| statement.indexOf("sister") >= 0
-				|| statement.indexOf("brother") >= 0)
-		{
-			response = "Tell me more about your family.";
-		}
-		else
-		{
-			response = getRandomResponse();
-		}
-		return response;
+		int responseArraySize = possibleResponses.size();
+		if (responseArraySize == 0) {return " ";} else { //if there are no possible responses
+			return possibleResponses.get(0);}
 	}
 
 	/**
 	 * Pick a default response to use if nothing else fits.
 	 * @return a non-committal string
 	 */
-	private String getRandomResponse()
-	{
-		final int NUMBER_OF_RESPONSES = 4;
-		double r = Math.random();
-		int whichResponse = (int)(r * NUMBER_OF_RESPONSES);
-		String response = "";
-		
-		if (whichResponse == 0)
-		{
-			response = "Interesting, tell me more.";
+	public static int getRandomNumber(int min, int max) {
+		return (int) ((Math.random() * (max - min)) + min);
+	}
+	public static String getUncommittedResponse(){
+		String response = " "; //dont change without changing the variable "lastUncommittedResponse"
+		while (true) {
+			response = randomPhrases[getRandomNumber(0,randomPhrases.length)];
+			if (!response.equals(lastUncommittedResponse)){ //while (condition) ?
+				lastUncommittedResponse = response;
+				break;
+			}
 		}
-		else if (whichResponse == 1)
-		{
-			response = "Hmmm.";
-		}
-		else if (whichResponse == 2)
-		{
-			response = "Do you really think so?";
-		}
-		else if (whichResponse == 3)
-		{
-			response = "You don't say.";
-		}
-
 		return response;
 	}
 }
