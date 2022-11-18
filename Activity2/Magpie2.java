@@ -35,7 +35,7 @@ public class Magpie2
 
 	public static String getExactResponse(String text){
         /*
-        Does not account for punctuation as of now!
+        Does account for punctuation as of now!
          */
 		String [] wordList = {"no,nope--Why not?"};
 		text = reformatText(text);
@@ -45,8 +45,6 @@ public class Magpie2
 			for (String k : keywords){
 				if (text.equals(k)){
 					return localConditions[1];
-				} else {
-					System.out.println(k+" "+s);
 				}
 			}
 		}
