@@ -32,7 +32,7 @@ public class MagpieRunner2
 				response = magpie.getExactResponse(userInput);
 			}
 			if (response.equals(" ")){
-				response = magpie.getUncommittedResponse();
+				response = magpie.getUncommittalResponse();
 			}
 			//last "getResponse" should be random response
 

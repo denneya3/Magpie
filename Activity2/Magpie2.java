@@ -16,30 +16,50 @@ import java.util.ArrayList;
  */
 public class Magpie2
 {
+	/*
+	Don't make useless methods for no reasons!
+	For instance, instead of creating a Greeting method, you can simply utilize the keyword-response method.
+	Try to utilize existing methods as much as possible
+	 */
+
 	static final String[] randomPhrases = {"Can you tell me more?","I don't understand.","Hm.","Can you rephrase it?",
 			"I don't know how to respond to that.","Oh.","Okay.","Um.","Can we talk about something else?"};
-	private static String lastUncommittedResponse = " ";
+	private static String lastUncommittalResponse = " ";
 
-	/**
-	 * Get a default greeting 	
-	 * @return a greeting
+	 static final String[] keywordResponses = {"mother,sister,my--Im interested in your family! Tell me more please.",
+			"dog;cat--Tell me more about your pets.",
+			"mother;sister--I wish I could meet your family.",
+			"Mr. Smith,teacher--To be honest, all I know is that Mr. Smith is a great teacher!",
+	"hi;hello;wsp;what's up;whats up; hey--Hello!",
+	"blueface--I don't know why he tried killing her...",
+	"APCSA;CSA;AP--APCSA is a good class."};
+	/*
+	FORMAT: List of words to trigger response--response_text
+	Words are separated by , or ;
+	, means and <-- all words must be present
+	; means or <-- only one of the words must be present
+	don't mix ; and , in a list, the list must only have on type of comma
 	 */
-	public String getGreeting()
-	{
-		return "Hello, let's talk.";
-	}
 
+	//FIX IT SO keywordReponses and ExactResponses can work with "Mr. Smith" "What's up"
+
+	private static String[] exactReponses = {"no,nope--Why not?"};
+	// Only separate the keyword list here with commas
+
+	public static int getRandomNumber(int min, int max) {
+		return (int) ((Math.random() * (max - min)) + min);
+	}
 	public static String reformatText(String text){
 		return text.toLowerCase().replaceAll("[^a-zA-Z ]", "").toLowerCase(); // not tested
 	}
-
 	public static String getExactResponse(String text){
         /*
+        Returns a response if text is equal to something in the exactReponses list
         Does account for punctuation as of now!
          */
-		String [] wordList = {"no,nope--Why not?"};
+		String [] exactReponses = {"no,nope--Why not?"};
 		text = reformatText(text);
-		for (String s : wordList){
+		for (String s : exactReponses){
 			String[] localConditions = s.split("--"); // code "repeated" later
 			String[] keywords = localConditions[0].split(",");
 			for (String k : keywords){
@@ -50,20 +70,11 @@ public class Magpie2
 		}
 		return " ";
 	}
-	/**
-	 * Gives a response to a user statement
-	 * 
-	 * @param statement
-	 *            the user statement
-	 * @return a response based on the rules given
-	 */
-	private static String[] wordList = {"mother,sister,my--Im interested in your family!",
-			"dog;cat--Tell me more about your pets.",
-			"mother;sister--I wish I could meet your family.",
-			"Mr. Smith,teacher--To be honest, all I know is that Mr. Smith is a great teacher!"};
 
 	public static String getKeywordResponse(String text) {
-        /*Considers capitalizatoon
+        /*
+        Returns a response based on keywords found in text
+        Considers capitalizatoon
         Considers if keyword is a substring of a word
         Does punctuation as of now.
          */
@@ -72,10 +83,9 @@ public class Magpie2
         you cannot mix ; and , !
         */
 		text = reformatText(text);
-		ArrayList<String> words = new ArrayList<>();
-		words.addAll(Arrays.asList(text.split(" ")));
+		ArrayList<String> words = new ArrayList<>(Arrays.asList(text.split(" ")));
 		LinkedList<String> possibleResponses = new LinkedList<>();
-		for (String s : wordList) {
+		for (String s : keywordResponses) {
 			String[] localConditions = s.split("--");
 			String[] keywords;
 			if (localConditions[0].contains(";")) { //OR
@@ -103,19 +113,13 @@ public class Magpie2
 			return possibleResponses.get(0);}
 	}
 
-	/**
-	 * Pick a default response to use if nothing else fits.
-	 * @return a non-committal string
-	 */
-	public static int getRandomNumber(int min, int max) {
-		return (int) ((Math.random() * (max - min)) + min);
-	}
-	public static String getUncommittedResponse(){
-		String response = " "; //dont change without changing the variable "lastUncommittedResponse"
+	//Default response to use if nothing else fits
+	public static String getUncommittalResponse(){
+		String response = " "; //dont change without changing the variable "lastUncommittalResponse"
 		while (true) {
 			response = randomPhrases[getRandomNumber(0,randomPhrases.length)];
-			if (!response.equals(lastUncommittedResponse)){ //while (condition) ?
-				lastUncommittedResponse = response;
+			if (!response.equals(lastUncommittalResponse)){ //while (condition) ?
+				lastUncommittalResponse = response;
 				break;
 			}
 		}
