@@ -29,7 +29,7 @@ public class Magpie2
 	 static final String[] keywordResponses = {"mother,sister,my--Im interested in your family! Tell me more please.",
 			"dog;cat--Tell me more about your pets.",
 			"mother;sister--I wish I could meet your family.",
-			"Mr. Smith,teacher--To be honest, all I know is that Mr. Smith is a great teacher!",
+			"smith;teacher--To be honest, all I know is that Mr. Smith is a great teacher!",
 	"hi;hello;wsp;what's up;whats up; hey--Hello!",
 	"blueface--I don't know why he tried killing her...",
 	"APCSA;CSA;AP--APCSA is a good class."};
@@ -57,13 +57,12 @@ public class Magpie2
         Returns a response if text is equal to something in the exactReponses list
         Does account for punctuation as of now!
          */
-		String [] exactReponses = {"no,nope--Why not?"};
 		text = reformatText(text);
 		for (String s : exactReponses){
 			String[] localConditions = s.split("--"); // code "repeated" later
 			String[] keywords = localConditions[0].split(",");
 			for (String k : keywords){
-				if (text.equals(k)){
+				if (text.equals(k.toLowerCase())){
 					return localConditions[1];
 				}
 			}
@@ -91,7 +90,7 @@ public class Magpie2
 			if (localConditions[0].contains(";")) { //OR
 				keywords = localConditions[0].split(";");
 				for (String keyword : keywords) {
-					if (words.contains(keyword)) {
+					if (words.contains(keyword.toLowerCase())) {
 						possibleResponses.addLast(localConditions[1]); //AND has priority
 					}
 				}
@@ -99,7 +98,7 @@ public class Magpie2
 				keywords = localConditions[0].split(",");
 				int contained = 0;
 				for (String keyword : keywords) {
-					if (words.contains(keyword)) {
+					if (words.contains(keyword.toLowerCase())) {
 						contained++;
 					}
 				}
