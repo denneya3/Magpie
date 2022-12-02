@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+import java.util.ArrayList;
 
 
 /**
@@ -12,29 +12,25 @@ public class MagpieRunner2
 	public static void pln(String txt){
 		System.out.println(txt);
 	}
-	/**
-	 * Create a Magpie, give it user input, and print its replies.
-	 */
-	public static void main(String[] args)
+	public static void main(String[] args) // the Magpie Runner
 	{
 		Scanner input = new Scanner(System.in);
 		while (true) {
 			String userInput = input.nextLine();
 			String response = " ";
-
 			Magpie2 magpie = new Magpie2();
-
-			//go through different methods until " " isnt returned | this is messy unorganized code
-			String resp = magpie.getKeywordResponse(userInput);
-			if (!resp.equals(" ")){
-				response = resp;
-			} else {
+			if (userInput.length()==0 || magpie.getWordsList(userInput,false).size()==0){
+				response = magpie.getBlankResponse();
+			}
+			else{ // First priority
+				response = magpie.getKeywordResponse(userInput);;
+			}
+			if (response.equals(" ")) { // Second  priority
 				response = magpie.getExactResponse(userInput);
 			}
-			if (response.equals(" ")){
-				response = magpie.getUncommittalResponse();
+			if (response.equals(" ")){ // Last priority
+				response = magpie.getUncommittalResponse(); //last "getResponse" should be random response
 			}
-			//last "getResponse" should be random response
 
 			pln(response);
 		}
